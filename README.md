@@ -16,4 +16,20 @@ implement Bellman-Ford's algorithm using openmp
 
 - g++ -std=c++11 src/main.cpp
 
+- g++ -std=c++11 -fopenmp src/main.cpp
+
+- g++ -std=c++11 -pthread src/pt_main.cpp
+
 - ./a.out graph.txt
+
+## Simplify it!
+
+- run ./build.sh to build exe files: mkGraph, strictBF, openmpBF, pthreadBF and generate graph
+
+(Only if you have ghc installed)
+
+- default settings: vertex count random seed 150
+
+- run ./run.sh to run strictBF, openmpBF and pthreadBF with graph.txt
+
+- enjoy!

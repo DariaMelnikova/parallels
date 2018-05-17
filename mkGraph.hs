@@ -7,10 +7,11 @@ grFile :: String
 grFile = "graph.txt"
 
 main = do
-  (vCnt :: Int)   <- randomRIO (0, 75)
-  (eCnt :: Int)   <- randomRIO (vCnt, 10*vCnt)
+  expSize <- (read <$> head <$> getArgs) :: IO Int
+  (vCnt :: Int)   <- randomRIO (0, expSize)
+  (eCnt :: Int)   <- randomRIO (vCnt, vCnt^2)
   (startV :: Int) <- randomRIO (0, vCnt)
-  (endV :: Int)   <- randomRIO (0, vCnt)
+  endV <- makeAnotherV startV vCnt
   
   writeFile grFile $ show vCnt ++ " " ++ 
                      show eCnt ++ " " ++
@@ -19,11 +20,17 @@ main = do
 
   genEdges eCnt vCnt
  where
+  makeAnotherV startV vCnt = do
+    endV <- randomRIO (0, vCnt)
+    if endV == startV 
+    then makeAnotherV startV vCnt
+    else return endV
+
   genEdges 0 _       = return ()
   genEdges eCnt vCnt = do
     (st  :: Int)  <- randomRIO (0, vCnt)
     (end :: Int)  <- randomRIO (0, vCnt)
-    weight :: Int <- randomRIO (-65536, 65536)
+    weight :: Int <- randomRIO (0, 511)
 
     appendFile grFile $ show st ++ " " ++
                         show end ++ " " ++
