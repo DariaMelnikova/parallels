@@ -39,7 +39,7 @@ void bf(int v_cnt, int e_cnt, int start_v, int end_v, vector<edge> gr) {
       }
  
   chrono::high_resolution_clock::time_point end_t = std::chrono::high_resolution_clock::now();
-
+/*
   if (d[ end_v ] == imax)
     {
       cout << "Imossible to find the path" << endl;
@@ -54,8 +54,8 @@ void bf(int v_cnt, int e_cnt, int start_v, int end_v, vector<edge> gr) {
         cout << result[i] << ' ';
       cout << endl;
     }
-
-  cout << "Elapsed time: " << (end_t - start_t).count() << endl; 
+*/
+  cout << /*"Elapsed time: " << */(end_t - start_t).count() << endl; 
 
 }
 

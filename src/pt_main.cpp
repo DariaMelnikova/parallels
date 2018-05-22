@@ -13,30 +13,39 @@ struct edge {
 };
 
 const int imax  = numeric_limits<int>::max();
+
+typedef struct{
 vector<edge> gr;
 vector<int> d;
 vector<int> p;
+} arg;
+
+vector<edge> gr;
 
 int v_cnt, e_cnt;
 
 
 void* thread(void * args) {
+  arg * a = (arg*)args;
   for (int j = 0; j < e_cnt - 1; j++)
-    if (d[ gr[j].start ] < imax)
+    if (a->d[ a->gr[j].start ] < imax)
       {
-        if (d[ gr[j].end ] > d[ gr[j].start ] + gr[j].weight)
+        if (a->d[ a->gr[j].end ] > a->d[ a->gr[j].start ] + a->gr[j].weight)
           {
-             d[ gr[j].end ] = d[ gr[j].start ] + gr[j].weight;
-             p[ gr[j].end ] = gr[j].start;
+             a->d[ a->gr[j].end ] = a->d[ a->gr[j].start ] + a->gr[j].weight;
+             a->p[ a->gr[j].end ] = a->gr[j].start;
           }
       }
 
 }
 
 void bf(int start_v, int end_v) {
-    d = vector<int> (v_cnt, imax);
-    d[ start_v ] = 0;
-    p = vector<int>(v_cnt, -1);
+    arg a;
+
+    a.d = vector<int> (v_cnt, imax);
+    a.d[ start_v ] = 0;
+    a.p = vector<int>(v_cnt, -1);
+    a.gr=gr;
 
     chrono::high_resolution_clock::time_point start_t = std::chrono::high_resolution_clock::now();
 
@@ -48,7 +57,7 @@ void bf(int start_v, int end_v) {
     for (int i = 0; i < thread_num; i++) 
       {
 
-        if (pthread_create(&threads[i], NULL, thread, 0))
+        if (pthread_create(&threads[i], NULL, thread, (void*)&a))
           {
             cout << "Error: create thread " << endl;
             exit(1);
@@ -66,8 +75,8 @@ void bf(int start_v, int end_v) {
       }
 
     chrono::high_resolution_clock::time_point end_t = std::chrono::high_resolution_clock::now();
-
-    if (d[ end_v ] == imax)
+/*
+    if (a.d[ end_v ] == imax)
       {
         cout << "Imossible to find the path" << endl;
         return;
@@ -75,15 +84,16 @@ void bf(int start_v, int end_v) {
     else 
       {
         vector<int> result;
-        for (int i = end_v; i != -1; i = p[i])
+        for (int i = end_v; i != -1; i = a.p[i])
           result.push_back(i);
 
         for (int i = result.size(); i >= 0; i--)
             cout << result[i] << ' ';
         cout << endl;
       }
+*/
+    cout <</* "Elapsed time: " <<*/ (end_t - start_t).count() << endl; 
 
-    cout << "Elapsed time: " << (end_t - start_t).count() << endl; 
 }
 
 main(int argc, char* argv[]) {

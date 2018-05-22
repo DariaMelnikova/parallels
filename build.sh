@@ -1,5 +1,5 @@
 ghc mkGraph.hs
-./mkGraph 150
+./mkGraph $1
 
 mkdir bin
 g++ -std=c++11 -o bin/strictBF src/main.cpp
