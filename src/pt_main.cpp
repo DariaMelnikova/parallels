@@ -3,6 +3,9 @@
 #include <vector>
 #include <limits>
 #include <chrono>
+#include <cmath>
+
+#define NUM_THREADS 8
 
 using namespace std;
 
@@ -12,13 +15,21 @@ struct edge {
   int weight;
 };
 
+
 const int imax  = numeric_limits<int>::max();
 
 typedef struct{
-vector<edge> gr;
-vector<int> d;
-vector<int> p;
+  vector<edge> gr;
+  vector<int> d;
+  vector<int> p;
+  int it_num;
 } arg;
+
+typedef struct{
+  int threadNum;
+  int firstNode;
+  int lastNode;
+} threadInfo;
 
 vector<edge> gr;
 
@@ -27,6 +38,7 @@ int v_cnt, e_cnt;
 
 void* thread(void * args) {
   arg * a = (arg*)args;
+  for (int i = 0; i < a->it_num; i++)
   for (int j = 0; j < e_cnt - 1; j++)
     if (a->d[ a->gr[j].start ] < imax)
       {
@@ -49,14 +61,15 @@ void bf(int start_v, int end_v) {
 
     chrono::high_resolution_clock::time_point start_t = std::chrono::high_resolution_clock::now();
 
-    int thread_num = v_cnt - 1;
     int status_addr;
 
-    vector<pthread_t> threads(thread_num);
+    vector<pthread_t> threads(NUM_THREADS);
 
-    for (int i = 0; i < thread_num; i++) 
+    int step = floor(v_cnt/(float)NUM_THREADS);
+
+    for (int i = 0; i < NUM_THREADS; i++) 
       {
-
+        a.it_num = i == NUM_THREADS - 1 ? v_cnt - i*step : step;
         if (pthread_create(&threads[i], NULL, thread, (void*)&a))
           {
             cout << "Error: create thread " << endl;
@@ -64,7 +77,7 @@ void bf(int start_v, int end_v) {
           }
       }
 
-    for (int i = 0; i < thread_num; i++) 
+    for (int i = 0; i < NUM_THREADS; i++) 
       {
 
         if (pthread_join(threads[i], (void**)&status_addr))
@@ -92,7 +105,10 @@ void bf(int start_v, int end_v) {
         cout << endl;
       }
 */
-    cout <</* "Elapsed time: " <<*/ (end_t - start_t).count() << endl; 
+  chrono::duration<double> time_span = chrono::duration_cast<chrono::duration<double>>(end_t - start_t);
+  cout << /*"Elapsed time: " << */time_span.count() << endl;
+
+
 
 }
 
